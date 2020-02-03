@@ -122,14 +122,12 @@ class AppWindow(QWidget):
         self.set_btn_audio_enabled()
         self.set_btn_video_enabled()
         print('[+] Download To ' + self.get_download_path())
-        self.set_progress_text('[+] Download Worker Done')
 
     ##############################################################################################################################
 
     def click_btn_audio(self):
         download_path = self.get_download_path()
         youtube_link = self.get_youtube_link()
-        self.set_progress_text('[+] Start Download ' + youtube_link + ' To ' + download_path)
 
         if not download_path:
             self.set_progress_text('Please, Input Download Path')
@@ -142,7 +140,8 @@ class AppWindow(QWidget):
         try:
             self.set_btn_audio_enabled(False)
             self.set_btn_video_enabled(False)
-            self.set_progress_text('[+] Start Download Worker')
+            self.set_progress_text('[+] Start Download : ' + youtube_link)
+            self.set_progress_text('[+] Download Path : ' + download_path)
 
             worker = Worker(self.worker_execute, url = youtube_link, download_type = 'audio', download_path = download_path)
             worker.signals.result.connect(self.worker_output)
@@ -177,10 +176,21 @@ class AppWindow(QWidget):
             return
 
         try:
-            # QApplication.processEvents()
-            # _YTD = YouTubeDownloader(youtube_link)
-            # _YTD.download_video(download_path, self.set_progress_text, self.set_progress_bar)
-            pass
+            self.set_btn_audio_enabled(False)
+            self.set_btn_video_enabled(False)
+            self.set_progress_text('[+] Start Download : ' + youtube_link)
+            self.set_progress_text('[+] Download Path : ' + download_path)
+
+            worker = Worker(self.worker_execute, url = youtube_link, download_type = 'video', download_path = download_path)
+            worker.signals.result.connect(self.worker_output)
+            worker.signals.progress.connect(self.set_progress_bar)
+            worker.signals.finished.connect(self.thread_complete)
+
+            self.threadpool.start(worker)
+
+        except (TypeError, KeyError, ValueError) as le:
+            print(le.__class__, le.__str__())
+            self.set_progress_text('Logic Error Raised')
 
         except RegexMatchError:
             self.set_progress_text('Invalid YouTube Link')

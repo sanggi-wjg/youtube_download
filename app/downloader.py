@@ -16,7 +16,7 @@ class YouTubeDownloader:
     ##############################################################################################################################
 
     def show_stream_all(self):
-        for s in self._YT.streams.filter(progressive = True).all():
+        for s in self._YT.streams.all():
             print(s)
 
     ##############################################################################################################################
@@ -31,10 +31,11 @@ class YouTubeDownloader:
 
     ##############################################################################################################################
     def _find_stream(self, type):
+        # self.show_stream_all()
         if type == 'audio':
             self._stream = self._YT.streams.get_audio_only()
         elif type == 'video':
-            self._stream = self._YT.streams.filter(only_video = True, progressive = True, mime_type = 'video/mp4', type = 'video').order_by('resolution').last()
+            self._stream = self._YT.streams.filter(only_video = True, progressive = False, mime_type = 'video/mp4', type = 'video').order_by('resolution').last()
         else:
             raise ValueError('Invalid type')
 
