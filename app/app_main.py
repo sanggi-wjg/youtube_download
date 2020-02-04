@@ -119,8 +119,10 @@ class AppWindow(QWidget):
         return True
 
     def thread_complete(self):
-        self.set_btn_audio_enabled()
-        self.set_btn_video_enabled()
+        # self.set_btn_audio_enabled()
+        # self.set_btn_video_enabled()
+        self._youtube_btn_audio.setEnabled(True)
+        self._youtube_btn_video.setEnabled(True)
         print('[+] Download To ' + self.get_download_path())
 
     ##############################################################################################################################
