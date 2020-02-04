@@ -1,4 +1,5 @@
-import time
+import logging
+import sys
 
 from PyQt5.QtCore import QThreadPool
 from PyQt5.QtGui import QIcon
@@ -60,14 +61,17 @@ class AppWindow(QWidget):
         self._download_group.setLayout(self._download_layout)
 
     def get_download_path(self):
-        return str(self._download_lineEdit.text())
+        path = str(self._download_lineEdit.text()).strip()
+        self._download_lineEdit.setText(path)
+        return path
 
     ##############################################################################################################################
 
     def _layout_youtube(self):
         self._youtube_group = QGroupBox('YouTube')
         self._youtube_label = QLabel('Link:')
-        self._youtube_lineEdit = QLineEdit('https://youtu.be/TdeY6cA3j2Q?list=PLFv3ZQw-ZPxi0H9oZp_lIsmak7bu_lcrK')
+        # self._youtube_lineEdit = QLineEdit('https://youtu.be/TdeY6cA3j2Q?list=PLFv3ZQw-ZPxi0H9oZp_lIsmak7bu_lcrK')
+        self._youtube_lineEdit = QLineEdit()
         self._youtube_btn_audio = QPushButton('Audio', self)
         self._youtube_btn_audio.clicked.connect(self.click_btn_audio)
         self._youtube_btn_video = QPushButton('Video', self)
@@ -84,18 +88,6 @@ class AppWindow(QWidget):
         link = str(self._youtube_lineEdit.text()).strip()
         self._youtube_lineEdit.setText(link)
         return link
-
-    def set_btn_audio_enabled(self, setEnable = True):
-        if setEnable:
-            self._youtube_btn_audio.setEnabled(True)
-        else:
-            self._youtube_btn_audio.setDisabled(True)
-
-    def set_btn_video_enabled(self, setEnable = True):
-        if setEnable:
-            self._youtube_btn_video.setEnabled(True)
-        else:
-            self._youtube_btn_video.setDisabled(True)
 
     ##############################################################################################################################
 
@@ -140,8 +132,8 @@ class AppWindow(QWidget):
             return
 
         try:
-            self.set_btn_audio_enabled(False)
-            self.set_btn_video_enabled(False)
+            self._youtube_btn_audio.setDisabled(True)
+            self._youtube_btn_video.setDisabled(True)
             self.set_progress_text('[+] Start Download : ' + youtube_link)
             self.set_progress_text('[+] Download Path : ' + download_path)
 
@@ -154,14 +146,14 @@ class AppWindow(QWidget):
 
         except (TypeError, KeyError, ValueError) as le:
             print(le.__class__, le.__str__())
-            self.set_progress_text('Logic Error Raised')
+            # self.set_progress_text('Logic Error Raised')
 
         except RegexMatchError:
             self.set_progress_text('Invalid YouTube Link')
 
         except Exception as e:
             print(e.__class__, e.__str__())
-            self.set_progress_text(e.__str__())
+            # self.set_progress_text(e.__str__())
 
     ##############################################################################################################################
 
@@ -192,14 +184,14 @@ class AppWindow(QWidget):
 
         except (TypeError, KeyError, ValueError) as le:
             print(le.__class__, le.__str__())
-            self.set_progress_text('Logic Error Raised')
+            # self.set_progress_text('Logic Error Raised')
 
         except RegexMatchError:
             self.set_progress_text('Invalid YouTube Link')
 
         except Exception as e:
             print(e.__class__, e.__str__())
-            self.set_progress_text(e.__str__())
+            # self.set_progress_text(e.__str__())
 
     ##############################################################################################################################
 
@@ -236,11 +228,8 @@ class AppWindow(QWidget):
 ##############################################################################################################################
 
 if __name__ == '__main__':
-    try:
-        app = QApplication([])
-        window = AppWindow()
-        # sys.exit(app.exec_())
-        app.exec_()
+    logging.getLogger('pytube').setLevel(logging.DEBUG)
 
-    except Exception as e:
-        print(e.__traceback__.tb_lineno, e.__str__())
+    app = QApplication([])
+    window = AppWindow()
+    sys.exit(app.exec_())
