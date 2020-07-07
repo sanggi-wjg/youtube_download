@@ -2,6 +2,8 @@ import sys
 
 from pytube import YouTube
 
+from app.generic_util import ret_date_format
+
 
 class YouTubeDownloader:
     """
@@ -21,7 +23,7 @@ class YouTubeDownloader:
 
     ##############################################################################################################################
 
-    def _progress_callback(self, stream, chunk, file_handler, bytes_remaining):
+    def _progress_callback(self, stream, chunk, bytes_remaining):
         # print(stream, chunk, file_handler, bytes_remaining)
         progress = (100 * (self._stream.filesize - bytes_remaining)) / self._stream.filesize
         progress_fmt = ("\rDownloading : {:00.0f}% ...".format(progress))
@@ -47,6 +49,7 @@ class YouTubeDownloader:
     def download_stream(self, type, path):
         self._find_stream(type)
         print('[+] Find Stream ' + self._YT.title, self._stream)
+        filename = '{}_{}'.format(ret_date_format(), self._YT.title)
 
-        final_path = self._stream.download(path, self._YT.title)
+        final_path = self._stream.download(path, filename)
         print('\n[+] (Finish) Download : ' + final_path)

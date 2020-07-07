@@ -76,6 +76,7 @@ class AppWindow(QWidget):
         self._youtube_btn_audio.clicked.connect(self.click_btn_audio)
         self._youtube_btn_video = QPushButton('Video', self)
         self._youtube_btn_video.clicked.connect(self.click_btn_video)
+        self._youtube_btn_video.setDisabled(True)
 
         self._youtube_layout = QGridLayout()
         self._youtube_layout.addWidget(self._youtube_label, 0, 0)
@@ -146,14 +147,13 @@ class AppWindow(QWidget):
 
         except (TypeError, KeyError, ValueError) as le:
             print(le.__class__, le.__str__())
-            # self.set_progress_text('Logic Error Raised')
+            self.set_progress_text('Handled Error : ' + le.__str__)
 
         except RegexMatchError:
             self.set_progress_text('Invalid YouTube Link')
 
         except Exception as e:
-            print(e.__class__, e.__str__())
-            # self.set_progress_text(e.__str__())
+            self.set_progress_text('500 Error : ' + e.__str__())
 
     ##############################################################################################################################
 
@@ -211,6 +211,7 @@ class AppWindow(QWidget):
 
         except Exception as e:
             print(e.__traceback__.tb_lineno, e.__str__())
+            self.set_progress_text(e.__str__())
 
     def set_progress_text(self, msg = ''):
         try:
@@ -222,6 +223,7 @@ class AppWindow(QWidget):
 
         except Exception as e:
             print(e.__traceback__.tb_lineno, e.__str__())
+            self.set_progress_text(e.__str__())
     ##############################################################################################################################
 
 
